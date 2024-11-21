@@ -1,7 +1,6 @@
 <repo>
     <project origin="https://github.com/Kelly0731/SOFT310Project-TeamB">
-        <module>
-            <name>SOFT310Project-TeamB</name>
+        <module name="SOFT310Project-TeamB">
             <path>.</path>
             <dependencies>
                 <dependency>
@@ -28,4 +27,3 @@
         </module>
     </project>
 </repo>
-
