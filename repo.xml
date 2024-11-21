@@ -1,5 +1,5 @@
 <repo>
-    <project>
+    <project origin="https://github.com/Kelly0731/SOFT310Project-TeamB">
         <module>
             <name>SOFT310Project-TeamB</name>
             <path>.</path>
@@ -28,3 +28,4 @@
         </module>
     </project>
 </repo>
+
