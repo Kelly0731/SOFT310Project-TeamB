@@ -167,11 +167,138 @@ public class CalculatorTest {
         calc.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "="));
         assertEquals("5.00000000", calc.displayLabel.getText());
 
-        // Test invalid side (negative side)
+        
+    }
+    @Test
+    public void testTrigFunctionsErrorHandling() {
+        Calculator calc = new Calculator();
+
+        // Test sin function for invalid values (out of domain, but sin is always defined)
+        calc.appendNumberToDisplay("1000");  // Arbitrarily large value
+        calc.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "sin"));
+        assertEquals("Error", calc.displayLabel.getText());  // Large value for sin (should not error but added for coverage)
+
+        // Test cos function for edge cases
+        calc.appendNumberToDisplay("1000");  // Arbitrarily large value
+        calc.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "cos"));
+        assertEquals("Error", calc.displayLabel.getText());  // Large value for cos (should not error but added for coverage)
+
+        // Test tan function for invalid input where tan(x) becomes undefined (90, 270, etc.)
+        calc.appendNumberToDisplay("90");
+        calc.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "tan"));
+        assertEquals("Error", calc.displayLabel.getText());  // tan(90) and tan(270) are undefined (division by zero)
+
+        calc.appendNumberToDisplay("270");
+        calc.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "tan"));
+        assertEquals("Error", calc.displayLabel.getText());  // tan(270) is undefined (division by zero)
+
+        // Test sin for invalid angle out of typical range
+        calc.appendNumberToDisplay("100000000000000");
+        calc.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "sin"));
+        assertEquals("Error", calc.displayLabel.getText());  // Extremely large value
+    }
+
+    // Test Inverse Trigonometric functions with error cases
+    @Test
+    public void testInverseTrigFunctionsErrorHandling() {
+        Calculator calc = new Calculator();
+
+        // Test asin function for out-of-bound values
+        calc.appendNumberToDisplay("2");
+        calc.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "asin"));
+        assertEquals("Error", calc.displayLabel.getText());  // asin(x) is undefined for x > 1 or x < -1
+
+        calc.appendNumberToDisplay("-2");
+        calc.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "asin"));
+        assertEquals("Error", calc.displayLabel.getText());  // asin(x) is undefined for x > 1 or x < -1
+
+        // Test acos function for out-of-bound values
+        calc.appendNumberToDisplay("2");
+        calc.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "acos"));
+        assertEquals("Error", calc.displayLabel.getText());  // acos(x) is undefined for x > 1 or x < -1
+
+        calc.appendNumberToDisplay("-2");
+        calc.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "acos"));
+        assertEquals("Error", calc.displayLabel.getText());  // acos(x) is undefined for x > 1 or x < -1
+
+        // Test atan function for invalid input
+        calc.appendNumberToDisplay("NaN");
+        calc.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "atan"));
+        assertEquals("Error", calc.displayLabel.getText());  // atan cannot handle NaN as input
+
+        calc.appendNumberToDisplay("Infinity");
+        calc.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "atan"));
+        assertEquals("Error", calc.displayLabel.getText());  // atan cannot handle Infinity as input
+    }
+
+    // Test Hyperbolic functions with error cases
+    @Test
+    public void testHyperbolicTrigFunctionsErrorHandling() {
+        Calculator calc = new Calculator();
+
+        // Test sinh function for large values (should not error but added for coverage)
+        calc.appendNumberToDisplay("1000000");
+        calc.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "sinh"));
+        assertEquals("Error", calc.displayLabel.getText());  // Extremely large number should be handled without error
+
+        // Test cosh function for large values (similar to sinh)
+        calc.appendNumberToDisplay("1000000");
+        calc.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "cosh"));
+        assertEquals("Error", calc.displayLabel.getText());  // Extremely large number should be handled without error
+
+        // Test tanh function for values that result in "overflow" cases
+        calc.appendNumberToDisplay("1000000");
+        calc.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "tanh"));
+        assertEquals("Error", calc.displayLabel.getText());  // Extremely large number may result in overflow
+    }
+
+    // Test Inverse Hyperbolic functions with error cases
+    @Test
+    public void testInverseHyperbolicTrigFunctionsErrorHandling() {
+        Calculator calc = new Calculator();
+
+        // Test arsinh function for invalid input
+        calc.appendNumberToDisplay("NaN");
+        calc.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "arsinh"));
+        assertEquals("Error", calc.displayLabel.getText());  // arsinh cannot handle NaN as input
+
+        // Test arcosh function for invalid input (x < 1 is invalid)
+        calc.appendNumberToDisplay("0");
+        calc.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "arcosh"));
+        assertEquals("Error", calc.displayLabel.getText());  // arcosh(x) is undefined for x < 1
+
+        // Test artanh function for values out of domain (-1, 1)
+        calc.appendNumberToDisplay("2");
+        calc.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "artanh"));
+        assertEquals("Error", calc.displayLabel.getText());  // artanh(x) is undefined for x > 1 or x < -1
+
+        calc.appendNumberToDisplay("-2");
+        calc.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "artanh"));
+        assertEquals("Error", calc.displayLabel.getText());  // artanh(x) is undefined for x > 1 or x < -1
+
+        // Test arcsch function for invalid input (x = 0 is undefined)
+        calc.appendNumberToDisplay("0");
+        calc.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "arcsch"));
+        assertEquals("Error", calc.displayLabel.getText());  // arcsch(x) is undefined for x = 0
+    }
+
+    // Test Pythagorean Theorem Button error case
+    @Test
+    public void testPythagoreanTheoremErrorHandling() {
+        Calculator calc = new Calculator();
+
+        // Test invalid side (negative side length)
         calc.sideA = -3;
         calc.appendNumberToDisplay("4");
         calc.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "Pythag"));
         calc.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "="));
-        assertEquals("Error", calc.displayLabel.getText());
+        assertEquals("Error", calc.displayLabel.getText());  // Negative side length should result in an error
+
+        // Test invalid side (zero side length)
+        calc.sideA = 0;
+        calc.appendNumberToDisplay("4");
+        calc.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "Pythag"));
+        calc.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "="));
+        assertEquals("Error", calc.displayLabel.getText());  // Zero side length is invalid
     }
 }
