@@ -267,7 +267,7 @@ public class Calculator implements ActionListener {
         }
     }
 
-    private void appendNumberToDisplay(String number) {
+    public void appendNumberToDisplay(String number) {
         if (isNewCalculation || displayLabel.getText().equals("0") || isOperatorClicked) {
             displayLabel.setText(number);
             isOperatorClicked = false;
