@@ -10,11 +10,14 @@ repositories {
 }
 
 dependencies {
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
-    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+    implementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'  // JUnit 5 API
+    implementation 'org.junit.jupiter:junit-jupiter-engine:5.7.0' // JUnit 5 Engine
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'  // JUnit 5 API for testing
+    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.7.0' // JUnit 5 Engine for testing
 }
+
 test {
-    useJUnitPlatform() // Ensure this line is present to enable JUnit 5
+    useJUnitPlatform()  // Ensure JUnit 5 is used for tests
 }
 
 tasks.withType(JavaCompile) {
