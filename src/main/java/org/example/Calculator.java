@@ -220,6 +220,11 @@ public class Calculator implements ActionListener {
             } else if (command.equals("Pythag")) {
                 // Start Pythagorean mode
                 sideA = Double.parseDouble(displayLabel.getText());
+                if (sideA <= 0) {
+                    displayLabel.setText("Error");
+                    isNewCalculation = true;
+                    return;
+                }
                 isPythagMode = true;
                 historyLabel.setText("a = " + formatResult(sideA) + ", enter b and press =");
                 isNewCalculation = true;
@@ -228,13 +233,14 @@ public class Calculator implements ActionListener {
         } catch (NumberFormatException ex) {
             displayLabel.setText("Error");
             isNewCalculation = true;
-            acButton.setText("AC"); // Reset AC button label
+            acButton.setText("AC");
         } catch (Exception ex) {
             displayLabel.setText("Error");
             isNewCalculation = true;
-            acButton.setText("AC"); // Reset AC button label
+            acButton.setText("AC");
         }
     }
+
 
     private void handleACOrBackspace() {
         if (acButton.getText().equals("AC")) {
@@ -331,7 +337,20 @@ public class Calculator implements ActionListener {
 
     private void handleTrigFunction(String command) {
         String baseCommand = command.replace("⁻¹", "");
-        double value = Double.parseDouble(displayLabel.getText());
+        double value;
+        try {
+            value = Double.parseDouble(displayLabel.getText());
+            if (value == 0 && (command.contains("sec") || command.contains("csc") || command.contains("cot"))) {
+                displayLabel.setText("Error");
+                isNewCalculation = true;
+                return;
+            }
+        } catch (NumberFormatException | ArithmeticException ex) {
+            displayLabel.setText("Error");
+            isNewCalculation = true;
+            return;
+        }
+
         double result = 0;
         String functionDisplay = command + "(" + value + ")";
         historyLabel.setText(functionDisplay);
@@ -357,56 +376,92 @@ public class Calculator implements ActionListener {
                 // Inverse trigonometric functions
                 switch (baseCommand) {
                     case "sin":
-                        if (value < -1 || value > 1) throw new Exception();
+                        if (value < -1 || value > 1) {
+                            displayLabel.setText("Error");
+                            isNewCalculation = true;
+                            return;
+                        }
                         result = Math.toDegrees(Math.asin(value));
                         break;
                     case "cos":
-                        if (value < -1 || value > 1) throw new Exception();
+                        if (value < -1 || value > 1) {
+                            displayLabel.setText("Error");
+                            isNewCalculation = true;
+                            return;
+                        }
                         result = Math.toDegrees(Math.acos(value));
                         break;
                     case "tan": result = Math.toDegrees(Math.atan(value)); break;
                     case "csc":
-                        if (value == 0) throw new Exception();
+                        if (value == 0) {
+                            displayLabel.setText("Error");
+                            isNewCalculation = true;
+                            return;
+                        }
                         result = Math.toDegrees(Math.asin(1 / value));
                         break;
                     case "sec":
-                        if (value == 0) throw new Exception();
+                        if (value == 0) {
+                            displayLabel.setText("Error");
+                            isNewCalculation = true;
+                            return;
+                        }
                         result = Math.toDegrees(Math.acos(1 / value));
                         break;
                     case "cot":
-                        if (value == 0) throw new Exception();
+                        if (value == 0) {
+                            displayLabel.setText("Error");
+                            isNewCalculation = true;
+                            return;
+                        }
                         result = Math.toDegrees(Math.atan(1 / value));
                         break;
                     case "sinh": result = Math.log(value + Math.sqrt(value * value + 1)); break;
                     case "cosh":
-                        if (value < 1) throw new Exception();
+                        if (value < 1) {
+                            displayLabel.setText("Error");
+                            isNewCalculation = true;
+                            return;
+                        }
                         result = Math.log(value + Math.sqrt(value * value - 1));
-                        result = Math.toDegrees(result);
                         break;
                     case "tanh":
-                        if (value <= -1 || value >= 1) throw new Exception();
+                        if (value <= -1 || value >= 1) {
+                            displayLabel.setText("Error");
+                            isNewCalculation = true;
+                            return;
+                        }
                         result = 0.5 * Math.log((1 + value) / (1 - value));
-                        result = Math.toDegrees(result);
                         break;
                     case "csch":
-                        if (value == 0) throw new Exception();
+                        if (value == 0) {
+                            displayLabel.setText("Error");
+                            isNewCalculation = true;
+                            return;
+                        }
                         result = Math.log((1 + Math.sqrt(1 + value * value)) / value);
-                        result = Math.toDegrees(result);
                         break;
                     case "sech":
-                        if (value <= 0 || value > 1) throw new Exception();
+                        if (value <= 0 || value > 1) {
+                            displayLabel.setText("Error");
+                            isNewCalculation = true;
+                            return;
+                        }
                         result = Math.log((1 + Math.sqrt(1 - value * value)) / value);
-                        result = Math.toDegrees(result);
                         break;
                     case "coth":
-                        if (value == 0 || value == 1 || value == -1) throw new Exception();
+                        if (value == 0 || value == 1 || value == -1) {
+                            displayLabel.setText("Error");
+                            isNewCalculation = true;
+                            return;
+                        }
                         result = 0.5 * Math.log((value + 1) / (value - 1));
-                        result = Math.toDegrees(result);
                         break;
                 }
             }
             if (Double.isNaN(result) || Double.isInfinite(result)) {
-                throw new Exception();
+                displayLabel.setText("Error");
+                isNewCalculation = true;
             } else {
                 displayLabel.setText(formatResult(result));
             }
@@ -445,3 +500,4 @@ public class Calculator implements ActionListener {
         }
     }
 }
+
